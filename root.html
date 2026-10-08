@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <title>Sprite Loft</title>
+        <link rel="manifest" href="manifest.json">
+        <link rel="apple-touch-icon" href="icon-192.png">
+        <meta name="theme-color" content="#1a0e14">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=EB+Garamond:wght@400;600&family=VT323&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <h1>AnotherSpriteEditor</h1>
+            <div class="row" style="margin:0">
+                <button class="b" id="undo">Undo</button>
+                <button class="b" id="redo">Redo</button>
+            </div>
+        </header>
+        <main class="app">
+            <div>
+                <section>
+                    <div class="row" id="tools">
+                        <button class="b on" data-t="pencil">Pencil</button>
+                        <button class="b" data-t="eraser">Eraser</button>
+                        <button class="b" data-t="fill">Fill</button>
+                        <button class="b" data-t="pick">Pick</button>
+                        <button class="b" data-t="line">Line</button>
+                        <button class="b" data-t="rect">Rect</button>
+                        <button class="b" data-t="circle">Circle</button>
+                        <button class="b" data-t="select">Select</button>
+                        <button class="b" data-t="move">Move</button>
+                    </div>
+                    <div class="row">
+                        <label>
+                            Brush
+                            <select id="bs">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="fl">
+                            Filled shapes
+                        </label>
+                        <label>
+                            <input type="checkbox" id="dt">
+                            Dither
+                        </label>
+                    </div>
+                    <div class="row">
+                        <button class="b" id="scp">Copy</button>
+                        <button class="b" id="scx">Cut</button>
+                        <button class="b" id="spt">Paste</button>
+                        <button class="b" id="sdl">Clear</button>
+                        <button class="b" id="sfh">Flip ↔</button>
+                        <button class="b" id="sfv">Flip ↕</button>
+                        <button class="b" id="srt">Rotate</button>
+                    </div>
+                    <div id="stage">
+                        <div id="cvw">
+                            <canvas id="cv"></canvas>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label>
+                            <input type="checkbox" id="gr" checked>
+                            Grid
+                        </label>
+                        <label>
+                            <input type="checkbox" id="on">
+                            Onion skin
+                        </label>
+                        <label>
+                            <input type="checkbox" id="mx">
+                            Mirror ↔
+                        </label>
+                        <label>
+                            <input type="checkbox" id="my">
+                            Mirror ↕
+                        </label>
+                        <button class="b" id="zo" aria-label="Zoom out">−</button>
+                        <button class="b" id="zf">Fit</button>
+                        <button class="b" id="zi" aria-label="Zoom in">+</button>
+                        <span id="pos"></span>
+                    </div>
+                    <div class="row">
+                        <button class="b" id="rf">Reference image</button>
+                        <input type="file" id="rff" accept="image/*" hidden>
+                        <label>
+                            Opacity
+                            <input type="range" id="ro" min="5" max="100" value="40">
+                        </label>
+                        <button class="b" id="rc">Clear</button>
+                        <label>
+                            <input type="checkbox" id="tp1">
+                            Tile preview
+                        </label>
+                    </div>
+                    <canvas id="tp" hidden aria-label="Tile preview"></canvas>
+                    <div class="row">
+                        <div id="pal"></div>
+                    </div>
+                    <div class="row ce">
+                        <input type="color" id="cp" aria-label="Color wheel">
+                        <label>
+                            Hex
+                            <input id="hx" maxlength="7" spellcheck="false" aria-label="Hex color">
+                        </label>
+                        <label>
+                            R
+                            <input type="number" id="cr" min="0" max="255">
+                        </label>
+                        <label>
+                            G
+                            <input type="number" id="cg" min="0" max="255">
+                        </label>
+                        <label>
+                            B
+                            <input type="number" id="cb" min="0" max="255">
+                        </label>
+                    </div>
+                    <div class="row">
+                        <button class="b" id="pa">Add to palette</button>
+                        <button class="b" id="pr">Remove swatch</button>
+                        <button class="b" id="pi">Import</button>
+                        <button class="b" id="pe">Export .hex</button>
+                        <button class="b" id="pg">Export .gpl</button>
+                        <input type="file" id="pif" accept=".hex,.gpl,.txt,text/plain" hidden>
+                    </div>
+                </section>
+            </div>
+            <aside>
+                <section>
+                    <h2>Frames</h2>
+                    <div class="strip" id="fr"></div>
+                    <div class="row">
+                        <button class="b" id="fa">Add</button>
+                        <button class="b" id="fd">Duplicate</button>
+                        <button class="b" id="fx">Delete</button>
+                        <button class="b" id="fml">← Move</button>
+                        <button class="b" id="fmr">Move →</button>
+                    </div>
+                    <div class="row">
+                        <button class="b" id="pl">Play</button>
+                        <label>
+                            Speed
+                            <input type="range" id="fps" min="1" max="24" value="8" aria-label="Frames per second">
+                            <span id="fpv">8 fps</span>
+                        </label>
+                    </div>
+                </section>
+                <section>
+                    <h2>Animations</h2>
+                    <div id="tg"></div>
+                    <div class="row">
+                        <input id="tn" placeholder="Name" aria-label="Animation name" maxlength="24">
+                        <label>
+                            From
+                            <input type="number" id="ta" min="1" value="1">
+                        </label>
+                        <label>
+                            To
+                            <input type="number" id="tb" min="1" value="1">
+                        </label>
+                        <label>
+                            fps
+                            <input type="number" id="tf" min="1" max="60" placeholder="auto">
+                        </label>
+                    </div>
+                    <div class="row">
+                        <button class="b" id="tadd">Add animation</button>
+                    </div>
+                </section>
+                <section>
+                    <h2>Layers</h2>
+                    <div id="ly"></div>
+                    <div class="row">
+                        <button class="b" id="la">Add</button>
+                        <button class="b" id="lx">Delete</button>
+                        <button class="b" id="lu">Move up</button>
+                        <button class="b" id="ld">Move down</button>
+                    </div>
+                    <div class="row">
+                        <label>
+                            Name
+                            <input id="lname" maxlength="24" aria-label="Layer name">
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label>
+                            Opacity
+                            <input type="range" id="lop" min="0" max="100" value="100">
+                            <span id="lopv">100%</span>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label>
+                            Blend
+                            <select id="lblend">
+                                <option value="source-over">Normal</option>
+                                <option value="multiply">Multiply</option>
+                                <option value="screen">Screen</option>
+                                <option value="overlay">Overlay</option>
+                            </select>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="llock">
+                            Lock
+                        </label>
+                    </div>
+                    <div class="row">
+                        <button class="b" id="ldup">Duplicate</button>
+                        <button class="b" id="lmerge">Merge down</button>
+                        <button class="b" id="lclr">Clear layer</button>
+                        <button class="b" id="lsel">Select pixels</button>
+                        <button class="b" id="lsolo">Show only this</button>
+                        <button class="b" id="lall">Show all</button>
+                    </div>
+                </section>
+                <section>
+                    <h2>Sprite sheet</h2>
+                    <canvas id="sp" aria-label="Sprite sheet preview"></canvas>
+                    <div class="row">
+                        <small id="si"></small>
+                    </div>
+                    <div class="row">
+                        <label>
+                            Columns
+                            <input type="number" id="sk" min="0" max="64" value="0">
+                        </label>
+                        <label>
+                            Padding
+                            <input type="number" id="sd" min="0" max="64" value="0">
+                        </label>
+                        <label>
+                            Margin
+                            <input type="number" id="sm" min="0" max="64" value="0">
+                        </label>
+                    </div>
+                    <div class="row">
+                        <small>Columns 0 = every frame in one row. Padding and margin are in exported pixels.</small>
+                    </div>
+                </section>
+                <section>
+                    <h2>Export</h2>
+                    <div class="row">
+                        <label>
+                            Scale
+                            <select id="sc">
+                                <option value="1">1×</option>
+                                <option value="2">2×</option>
+                                <option value="4" selected>4×</option>
+                                <option value="8">8×</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label>
+                            <input type="checkbox" id="tr" checked>
+                            Transparent background
+                        </label>
+                        <label>
+                            Fill
+                            <input type="color" id="bgc" value="#1a0e14" disabled aria-label="Background fill color">
+                        </label>
+                    </div>
+                    <div class="row">
+                        <button class="b" id="ef">Frame PNG</button>
+                        <button class="b" id="es">Sprite sheet PNG</button>
+                        <button class="b" id="ej">Sheet data JSON</button>
+                        <button class="b" id="eg">GIF</button>
+                    </div>
+                    <div class="row">
+                        <small>JSON includes every frame's rect plus Godot hframes/vframes (use padding 0 for Godot).</small>
+                    </div>
+                </section>
+                <section>
+                    <h2>New sprite</h2>
+                    <div class="row" id="sz">
+                        <button class="b" data-n="16">16×16</button>
+                        <button class="b" data-n="32">32×32</button>
+                        <button class="b" data-n="48">48×48</button>
+                        <button class="b" data-n="64">64×64</button>
+                    </div>
+                    <div class="row">
+                        <label>
+                            W
+                            <input type="number" id="cw" min="1" max="256" value="24">
+                        </label>
+                        <label>
+                            H
+                            <input type="number" id="ch" min="1" max="256" value="32">
+                        </label>
+                        <button class="b" id="cn">Create</button>
+                    </div>
+                    <div class="row">
+                        <button class="b" id="im">Import PNG</button>
+                        <input type="file" id="imf" accept="image/*" hidden>
+                    </div>
+                    <div class="row" id="imr" hidden>
+                        <label>
+                            Frame W
+                            <input type="number" id="iw" min="1" max="256">
+                        </label>
+                        <label>
+                            Frame H
+                            <input type="number" id="ih" min="1" max="256">
+                        </label>
+                        <button class="b" id="is">Slice into frames</button>
+                    </div>
+                    <div class="row">
+                        <small>Slicing uses the sheet padding and margin.</small>
+                    </div>
+                    <div class="row">
+                        <button class="b" id="ps">Save project</button>
+                        <button class="b" id="po">Open project</button>
+                        <input type="file" id="pf" accept=".json,application/json" hidden>
+                    </div>
+                    <div class="row">
+                        <small>Your work also autosaves in this browser.</small>
+                    </div>
+                </section>
+            </aside>
+        </main>
+        <div id="toast" role="status"></div>
+        <script src="script.js"></script>
+    </body>
+</html>
